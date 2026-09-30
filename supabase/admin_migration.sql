@@ -62,3 +62,8 @@ create policy "Admins can update academy media" on storage.objects for update to
 
 drop policy if exists "Admins can delete academy media" on storage.objects;
 create policy "Admins can delete academy media" on storage.objects for delete to authenticated using (bucket_id='academy-media' and public.is_admin());
+
+
+-- Course registration form
+alter table public.courses
+add column if not exists google_form_url text;
