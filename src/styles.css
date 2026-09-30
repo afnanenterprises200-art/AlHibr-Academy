@@ -23,3 +23,5 @@
 .media-cover{width:100%;height:210px;object-fit:cover;display:block}.media-card{overflow:hidden}.media-card .article-body{min-height:180px}.media-description{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;line-height:1.6}
 
 .media-card .media-description{color:#111!important}
+
+.media-card .article-body{min-height:0!important}.media-card .media-description{margin:10px 0 14px}.media-card .article-body h3{margin:8px 0}
