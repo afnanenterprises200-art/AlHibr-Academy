@@ -67,3 +67,4 @@ create policy "Admins can delete academy media" on storage.objects for delete to
 -- Course registration form
 alter table public.courses
 add column if not exists google_form_url text;
+\n-- Course WhatsApp contact link\nalter table public.courses\nadd column if not exists whatsapp_url text;\n
