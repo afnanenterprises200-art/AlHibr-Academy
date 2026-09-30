@@ -6,3 +6,4 @@
 
 .course-form-btn{margin-top:18px}.course-video-btn{margin-right:8px}@media(max-width:700px){.course-video-btn{margin-right:0;margin-top:10px}}
 \n.whatsapp-btn{margin-top:18px;background:#25d366;color:#fff;border-color:#25d366}.whatsapp-btn:hover{background:#1fb85a;border-color:#1fb85a}\n
+.social-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.social-links a{display:inline-flex;align-items:center;padding:7px 12px;border:1px solid #d8e2db;border-radius:999px;color:var(--green);font-size:13px;text-decoration:none;background:#fff}.social-links a:hover{border-color:#c8a65b;color:#8b6b2d}
