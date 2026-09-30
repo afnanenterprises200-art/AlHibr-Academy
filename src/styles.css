@@ -25,3 +25,5 @@
 .media-card .media-description{color:#111!important}
 
 .media-card .article-body{min-height:0!important}.media-card .media-description{margin:10px 0 14px}.media-card .article-body h3{margin:8px 0}
+
+.media-card,.media-card .article-body{height:auto!important;min-height:0!important}.media-card .article-body{padding:18px 22px!important;display:block!important}.media-card .article-body h3{margin:6px 0 8px!important;font-size:21px!important;line-height:1.35!important}.media-card .media-description{margin:8px 0 12px!important;max-height:78px!important}
