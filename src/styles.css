@@ -29,3 +29,5 @@ html,body,#root{background:#071f2d!important;color:#eef7f4}body{background:linea
 .course-modal,.course-modal-body{color:#111!important}.course-modal-body h2,.course-modal-body h3{color:#12372a!important}.course-modal-body p,.course-detail-text,.course-syllabus p,.course-modal-lead{color:#111!important}.course-info-grid>div{color:#111!important}.course-info-grid span{color:#555!important}.course-info-grid strong{color:#12372a!important}
 /* Online program card artwork */
 .quran-class-card{padding:0 0 24px!important;overflow:hidden}.quran-class-image{width:100%;height:165px;display:block;object-fit:cover}.quran-class-card .quran-class-icon{margin:18px 24px 14px}.quran-class-card h3,.quran-class-card p,.quran-class-card .quran-class-meta{margin-left:24px;margin-right:24px}.quran-class-card h3{margin-top:0}.quran-class-card .quran-class-meta{margin-bottom:0}
+
+/* Vercel redeploy trigger: 2026-10-02 */
