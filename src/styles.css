@@ -63,3 +63,7 @@ html,body,#root{background:#071f2d!important;color:#eef7f4}body{background:linea
 
 /* Any Urdu/Arabic-script content, including titles and headings, uses Jameel Noori Nastaleeq. */
 [dir="rtl"],.urdu-academy-name,.arabic,.article-reader-content,.article-reader-modal h2,.article-reader-modal h3,.article-reader-meta,.card-tag,.article-body h3,.article-body p,.about-full-text,.methodology-full,.quran-class-card h3,.quran-class-card p,.quran-class-meta,.course-modal-body h2,.course-modal-body h3,.course-modal-lead,.course-detail-text,.course-syllabus p,.course-info-grid strong,.course-info-grid span{font-family:"Jameel Noori Nastaleeq",serif!important}
+
+/* Public card descriptions and visible content use black text for readability. */
+.card p,.course-excerpt,.article-body p,.quran-class-card p,.quran-class-meta,.media-description,.section-subtext,.about-box p{color:#111!important}
+.card h3,.article-body h3,.quran-class-card h3,.media-card h3{color:#111!important}
