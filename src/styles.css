@@ -57,3 +57,6 @@ html,body,#root{background:#071f2d!important;color:#eef7f4}body{background:linea
 .article-action-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:20px 0 6px;padding:14px 0;border-bottom:1px solid #d9dfd2}.article-action-row .article-like-row{margin:0;padding:0;border:0}.article-share-btn{border:1px solid #0a3b3b;background:#0a3b3b;color:#fff;border-radius:999px;padding:9px 18px;font-weight:800;cursor:pointer;transition:.2s}.article-share-btn:hover{background:#123f46;transform:translateY(-1px);box-shadow:0 5px 14px #0002}.article-share-message{font-size:14px!important;color:#12372a!important;margin:8px 0 0}@media(max-width:600px){.article-action-row{align-items:stretch;flex-direction:column}.article-share-btn{width:100%}}
 
 .article-reader-content{font-family:"Jameel Noori Nastaleeq",serif!important;font-size:24px!important;line-height:2.2!important;direction:rtl;text-align:right;letter-spacing:0!important}
+
+/* Apply Jameel Noori Nastaleeq only to Urdu/Arabic-script text throughout the site. */
+.urdu-academy-name,.arabic,.article-reader-content,.urdu-text,[lang="ur"],[dir="rtl"]{font-family:"Jameel Noori Nastaleeq",serif!important}
