@@ -67,3 +67,5 @@ html,body,#root{background:#071f2d!important;color:#eef7f4}body{background:linea
 /* Public card descriptions and visible content use black text for readability. */
 .card p,.course-excerpt,.article-body p,.quran-class-card p,.quran-class-meta,.media-description,.section-subtext,.about-box p{color:#111!important}
 .card h3,.article-body h3,.quran-class-card h3,.media-card h3{color:#111!important}
+
+.about-full-text{color:#f0d77a!important}
