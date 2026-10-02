@@ -69,3 +69,7 @@ html,body,#root{background:#071f2d!important;color:#eef7f4}body{background:linea
 .card h3,.article-body h3,.quran-class-card h3,.media-card h3{color:#111!important}
 
 .about-full-text{color:#f0d77a!important}
+
+/* Final override: About section description is bright gold. */
+.about .about-box .about-full-text,
+.about-full-text{color:#f0d77a!important;-webkit-text-fill-color:#f0d77a!important;opacity:1!important}
