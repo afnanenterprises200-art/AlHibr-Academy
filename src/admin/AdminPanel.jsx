@@ -19,13 +19,19 @@ export default function AdminPanel(){
   const [saving,setSaving]=useState(false)
   const [message,setMessage]=useState('')
   const [settings,setSettings]=useState(null)
+  const [playlists,setPlaylists]=useState([])
 
   useEffect(()=>{supabase?.auth.getUser().then(({data})=>setUser(data.user))},[])
   useEffect(()=>{if(user) load()},[user,tab])
 
   async function load(){
     setLoading(true); setMessage('')
-    if(tab==='settings'){
+    if(tab==='media'){
+      const [{data,error},{data:ps,error:pe}]=await Promise.all([supabase.from('media').select('*').order('created_at',{ascending:false}),supabase.from('media_playlists').select('*').order('created_at',{ascending:false})])
+      if(error||pe) setMessage((error||pe).message); else {setItems(data||[]);setPlaylists(ps||[])}
+      setLoading(false); return
+    }
+    if(tab==='playlists'){
       const {data,error}=await supabase.from('site_settings').select('*').eq('id',1).maybeSingle()
       if(error) setMessage(error.message); else setSettings(data||{})
       setLoading(false); return
@@ -36,7 +42,7 @@ export default function AdminPanel(){
   }
 
   function startNew(){
-    setEditing(tab==='courses'?{...emptyCourse}:tab==='articles'?{...emptyArticle}:tab==='media'?{...emptyMedia}:tab==='announcements'?{...emptyAnnouncement}:{...emptyQuranClass})
+    setEditing(tab==='courses'?{...emptyCourse}:tab==='articles'?{...emptyArticle}:tab==='media'?{...emptyMedia}:tab==='playlists'?{title:'',cover_url:'',published:true}:tab==='announcements'?{...emptyAnnouncement}:{...emptyQuranClass})
     setMessage('')
   }
   function startEdit(item){setEditing({...item})}
@@ -47,6 +53,7 @@ export default function AdminPanel(){
     const payload={...editing}
     if(table==='courses' && !payload.slug) payload.slug=slugify(payload.title)
     if(table==='articles' && !payload.slug) payload.slug=slugify(payload.title)
+    if(table==='media') { payload.playlist_id = payload.playlist_id ? Number(payload.playlist_id) : null; delete payload.playlist_title; delete payload.playlist_cover_url; delete payload.is_playlist }
     if(table==='courses') payload.fee=payload.fee===''?null:Number(payload.fee)
     if(table==='announcements'||table==='quran_classes') payload.sort_order=Number(payload.sort_order||0)
     if(table==='quran_classes') payload.fee=payload.fee===''?null:Number(payload.fee)
@@ -91,7 +98,7 @@ export default function AdminPanel(){
   if(!user) return <div className="admin-page"><div className="admin-card"><h1>Access required</h1><p>Admin login required.</p></div></div>
 
   const nav=[
-    ['courses','کورسز',BookOpen],['articles','مقالات',FileText],['media','میڈیا',Video],['quran_classes','Quran Classes',BookOpen],['announcements','اعلانات',Megaphone],['settings','سائٹ سیٹنگز',Settings]
+    ['courses','کورسز',BookOpen],['articles','مقالات',FileText],['media','میڈیا',Video],['playlists','پلے لسٹس',Video],['quran_classes','Quran Classes',BookOpen],['announcements','اعلانات',Megaphone],['settings','سائٹ سیٹنگز',Settings]
   ]
   return <div className="admin-shell" dir="rtl">
     <aside className="admin-sidebar">
@@ -103,7 +110,7 @@ export default function AdminPanel(){
     <main className="admin-main">
       <div className="admin-top"><div><span className="section-label">AL-HIBR ACADEMY</span><h1>{nav.find(x=>x[0]===tab)?.[1]}</h1></div>{tab!=='settings'&&<button className="btn primary" onClick={startNew}><Plus/> نیا شامل کریں</button>}</div>
       {message&&<div className="admin-message">{message}</div>}
-      {tab==='settings'?<SettingsForm settings={settings} setSettings={setSettings} onSave={saveSettings} saving={saving}/>:editing?<Editor tab={tab} value={editing} setValue={setEditing} onSave={saveItem} onCancel={()=>setEditing(null)} saving={saving} uploadFile={uploadFile}/>:loading?<div className="admin-empty">Loading...</div>:<List tab={tab} items={items} onEdit={startEdit} onDelete={removeItem}/>}
+      {tab==='settings'?<SettingsForm settings={settings} setSettings={setSettings} onSave={saveSettings} saving={saving}/>:editing?<Editor tab={tab} value={editing} setValue={setEditing} onSave={saveItem onCancel={()=>setEditing(null)} saving={saving} uploadFile={uploadFile}/>:loading?<div className="admin-empty">Loading...</div>:<List tab={tab} items={items} onEdit={startEdit} onDelete={removeItem}/>}
     </main>
   </div>
 }
@@ -113,7 +120,7 @@ function List({tab,items,onEdit,onDelete}){
 }
 
 function Field({label,children}){return <label className="admin-field"><span>{label}</span>{children}</label>}
-function Editor({tab,value,setValue,onSave,onCancel,saving,uploadFile}){
+function Editor({tab,value,setValue,onSave,onCancel,saving,uploadFile,playlists=[]}){
  const set=(k,v)=>setValue(x=>({...x,[k]:v}))
  const common=<>
   <Field label="عنوان"><input value={value.title||''} onChange={e=>set('title',e.target.value)} required/></Field>
@@ -123,7 +130,8 @@ function Editor({tab,value,setValue,onSave,onCancel,saving,uploadFile}){
    {common}
    {tab==='courses'&&<><Field label="مختصر تفصیل"><textarea value={value.short_description||''} onChange={e=>set('short_description',e.target.value)}/></Field><Field label="مکمل تفصیل"><textarea rows="6" value={value.description||''} onChange={e=>set('description',e.target.value)}/></Field><Field label="نصاب"><textarea rows="6" value={value.syllabus||''} onChange={e=>set('syllabus',e.target.value)}/></Field><Field label="Instructor"><input value={value.instructor||''} onChange={e=>set('instructor',e.target.value)}/></Field><Field label="Duration"><input value={value.duration||''} onChange={e=>set('duration',e.target.value)}/></Field><Field label="Fee"><input type="number" value={value.fee??''} onChange={e=>set('fee',e.target.value)}/></Field><Field label="Video URL"><input value={value.video_url||''} onChange={e=>set('video_url',e.target.value)} placeholder="YouTube یا دیگر video link"/></Field><Field label="Google Form Link"><input value={value.google_form_url||''} onChange={e=>set('google_form_url',e.target.value)} placeholder="https://forms.google.com/..."/></Field><Field label="Flyer URL"><input value={value.flyer_url||''} onChange={e=>set('flyer_url',e.target.value)}/><label className="upload-btn"><Upload/> Flyer upload<input type="file" accept="image/*" onChange={e=>uploadFile(e.target.files[0],'flyer_url')}/></label></Field><Checks value={value} set={set} featured/></>}
    {tab==='articles'&&<><Field label="مختصر خلاصہ"><textarea value={value.excerpt||''} onChange={e=>set('excerpt',e.target.value)}/></Field><Field label="مضمون"><textarea rows="14" value={value.content||''} onChange={e=>set('content',e.target.value)} required/></Field><Field label="مصنف"><input value={value.author||''} onChange={e=>set('author',e.target.value)}/></Field><Field label="Category"><input value={value.category||''} onChange={e=>set('category',e.target.value)}/></Field><Field label="Cover URL"><input value={value.cover_url||''} onChange={e=>set('cover_url',e.target.value)}/><label className="upload-btn"><Upload/> Cover upload<input type="file" accept="image/*" onChange={e=>uploadFile(e.target.files[0],'cover_url')}/></label></Field><Checks value={value} set={set}/></>}
-   {tab==='media'&&<><div className="check-row"><label><input type="checkbox" checked={!!value.is_playlist} onChange={e=>set('is_playlist',e.target.checked)}/> This is a Playlist</label></div><Field label="Playlist Title"><input value={value.playlist_title||''} onChange={e=>set('playlist_title',e.target.value)} placeholder="Playlist title"/></Field><Field label="Playlist Cover Photo"><input value={value.playlist_cover_url||''} onChange={e=>set('playlist_cover_url',e.target.value)}/><label className="upload-btn"><Upload/> Cover Photo Upload<input type="file" accept="image/*" onChange={e=>uploadFile(e.target.files[0],'playlist_cover_url')}/></label></Field><Field label="Type"><select value={value.type||'youtube'} onChange={e=>set('type',e.target.value)}><option value="youtube">YouTube</option><option value="video">Video</option><option value="lecture">Lecture</option></select></Field><Field label="Playlist Title"><input value={value.playlist_title||''} onChange={e=>set('playlist_title',e.target.value)} placeholder="مثلاً: Tafseer Series / Quran Lessons"/></Field><Field label="Video URL"><input value={value.url||''} onChange={e=>set('url',e.target.value)} required/></Field><Field label="Cover Photo"><input value={value.thumbnail_url||''} onChange={e=>set('thumbnail_url',e.target.value)} /><label className="upload-btn"><Upload/> Cover Photo Upload<input type="file" accept="image/*" onChange={e=>uploadFile(e.target.files[0],'thumbnail_url')}/></label></Field><Field label="Short Description"><textarea rows="4" value={value.description||''} onChange={e=>set('description',e.target.value)} placeholder="Brief description for the video card..."/></Field><Checks value={value} set={set}/></>}
+   {tab==='playlists'&&<><Field label="Playlist Title"><input value={value.title||''} onChange={e=>set('title',e.target.value)} required/></Field><Field label="Playlist Cover Photo"><input value={value.cover_url||''} onChange={e=>set('cover_url',e.target.value)}/><label className="upload-btn"><Upload/> Cover Photo Upload<input type="file" accept="image/*" onChange={e=>uploadFile(e.target.files[0],'cover_url')}/></label></Field><Checks value={value} set={set}/></>}
+   {tab==='media'&&<><Field label="Type"><select value={value.type||'youtube'} onChange={e=>set('type',e.target.value)}><option value="youtube">YouTube</option><option value="video">Video</option><option value="lecture">Lecture</option></select></Field><Field label="Playlist"><select value={value.playlist_id||''} onChange={e=>set('playlist_id',e.target.value||null)}><option value="">No Playlist</option>{playlists.map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select></Field><Field label="Type"><select value={value.type||'youtube'} onChange={e=>set('type',e.target.value)}><option value="youtube">YouTube</option><option value="video">Video</option><option value="lecture">Lecture</option></select></Field><Field label="Playlist Title"><input value={value.playlist_title||''} onChange={e=>set('playlist_title',e.target.value)} placeholder="مثلاً: Tafseer Series / Quran Lessons"/></Field><Field label="Video URL"><input value={value.url||''} onChange={e=>set('url',e.target.value)} required/></Field><Field label="Cover Photo"><input value={value.thumbnail_url||''} onChange={e=>set('thumbnail_url',e.target.value)} /><label className="upload-btn"><Upload/> Cover Photo Upload<input type="file" accept="image/*" onChange={e=>uploadFile(e.target.files[0],'thumbnail_url')}/></label></Field><Field label="Short Description"><textarea rows="4" value={value.description||''} onChange={e=>set('description',e.target.value)} placeholder="Brief description for the video card..."/></Field><Checks value={value} set={set}/></>}
    {tab==='announcements'&&<><Field label="تفصیل"><textarea value={value.description||''} onChange={e=>set('description',e.target.value)}/></Field><Field label="Image URL"><input value={value.image_url||''} onChange={e=>set('image_url',e.target.value)}/><label className="upload-btn"><Upload/> Image upload<input type="file" accept="image/*" onChange={e=>uploadFile(e.target.files[0],'image_url')}/></label></Field><Field label="Link URL"><input value={value.link_url||''} onChange={e=>set('link_url',e.target.value)}/></Field><Field label="Sort order"><input type="number" value={value.sort_order||0} onChange={e=>set('sort_order',e.target.value)}/></Field><Checks value={value} set={set}/></>}\n   {tab==='quran_classes'&&<><Field label="Class Title"><input value={value.title||''} onChange={e=>set('title',e.target.value)} required/></Field><Field label="Short Description"><textarea rows="3" value={value.short_description||''} onChange={e=>set('short_description',e.target.value)}/></Field><Field label="Full Description"><textarea rows="6" value={value.description||''} onChange={e=>set('description',e.target.value)}/></Field><Field label="Instructor / Teacher"><input value={value.instructor||''} onChange={e=>set('instructor',e.target.value)}/></Field><Field label="Timing"><input value={value.timing||''} onChange={e=>set('timing',e.target.value)} placeholder="e.g. Flexible / Mon-Fri"/></Field><Field label="Age Group"><input value={value.age_group||''} onChange={e=>set('age_group',e.target.value)} placeholder="e.g. Children & Adults"/></Field><Field label="Class Type"><select value={value.class_type||'One-to-One'} onChange={e=>set('class_type',e.target.value)}><option>One-to-One</option><option>Small Group</option><option>Both</option></select></Field><Field label="Fee"><input type="number" value={value.fee??''} onChange={e=>set('fee',e.target.value)}/></Field><Field label="Registration / Form Link"><input value={value.registration_url||''} onChange={e=>set('registration_url',e.target.value)} placeholder="Google Form or registration page"/></Field><Field label="Sort order"><input type="number" value={value.sort_order||0} onChange={e=>set('sort_order',e.target.value)}/></Field><Checks value={value} set={set} featured/></>}
    <div className="editor-actions"><button className="btn primary" disabled={saving}><Save/>{saving?'Saving...':'محفوظ کریں'}</button><button type="button" className="btn secondary" onClick={onCancel}><X/> Cancel</button></div>
  </form>
