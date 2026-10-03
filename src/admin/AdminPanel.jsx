@@ -63,7 +63,7 @@ export default function AdminPanel(){
 
   async function saveItem(e){
     e.preventDefault(); setSaving(true); setMessage('')
-    const table=tab==='playlists'?'media_playlists':tab==='topics'?'article_topics':tab==='topics'?'article_topics':tab
+    const table=tab==='playlists'?'media_playlists':tab==='topics'?'article_topics':tab
     const payload={...editing}
     if(table==='courses' && !payload.slug) payload.slug=slugify(payload.title)
     if(table==='articles' && !payload.slug) payload.slug=slugify(payload.title)
@@ -86,7 +86,7 @@ export default function AdminPanel(){
 
   async function removeItem(id){
     if(!confirm('کیا آپ واقعی اسے حذف کرنا چاہتے ہیں؟')) return
-    const table=tab==='playlists'?'media_playlists':tab
+    const table=tab==='playlists'?'media_playlists':tab==='topics'?'article_topics':tab
     const {error}=await supabase.from(table).delete().eq('id',id)
     setMessage(error?error.message:'حذف ہوگیا۔'); if(!error) await load()
   }
