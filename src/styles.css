@@ -73,3 +73,12 @@ html,body,#root{background:#071f2d!important;color:#eef7f4}body{background:linea
 /* Final override: About section description is bright gold. */
 .about .about-box .about-full-text,
 .about-full-text{color:#f0d77a!important;-webkit-text-fill-color:#f0d77a!important;opacity:1!important}
+
+/* Media playlists */
+.media-playlist{margin-top:28px}
+.media-playlist-title{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid #c8a65b;background:#f8f4e8;color:#12372a;border-radius:14px;padding:15px 18px;margin-bottom:12px;font-size:22px;font-weight:900;text-align:right;cursor:pointer}
+.media-playlist-title span{font-size:13px;font-weight:700;color:#8d6f2f;white-space:nowrap}
+.playlist-modal{max-width:1100px!important}
+.playlist-modal-grid{display:flex!important;flex-direction:row!important;gap:18px!important;overflow-x:auto!important;padding:6px 2px 14px!important}
+.playlist-modal-grid .media-card{width:300px!important;min-width:300px!important;flex:0 0 300px!important}
+@media(max-width:600px){.media-playlist-title{font-size:18px}.playlist-modal-grid .media-card{width:270px!important;min-width:270px!important;flex-basis:270px!important}}
