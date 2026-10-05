@@ -178,3 +178,14 @@ html,body,#root{background:#071f2d!important;color:#eef7f4}body{background:linea
 .achievement-follow{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;background:#1877f2;color:#fff;text-decoration:none;border-radius:999px;padding:10px 16px;font-weight:900;font-size:13px}.achievement-follow svg{width:15px}
 @media(max-width:950px){.social-achievement-line{gap:10px;padding:18px}.social-achievement-copy{min-width:220px}.social-achievement-copy h2{font-size:22px!important}.achievement-stat{min-width:145px;padding:10px}.achievement-text strong{font-size:23px}.achievement-follow{padding:9px 12px}}
 @media(max-width:700px){.social-achievement-line{display:grid;grid-template-columns:1fr 1fr;min-height:auto}.social-achievement-copy{grid-column:1/-1;min-width:0}.social-achievement-copy h2{max-width:none}.achievement-follow{justify-content:center}.achievement-stat{min-width:0}.achievement-text small{white-space:normal}}
+
+
+/* Analytics date controls */
+.analytics-range-bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#fff;border:1px solid #e1e7e2;border-radius:14px;padding:14px 16px;box-shadow:0 8px 24px #12372a0d;margin-bottom:18px}
+.analytics-range-buttons{display:flex;gap:7px;flex-wrap:wrap;flex:1}
+.analytics-range-buttons button{border:1px solid #d5ddd8;background:#f5f7f5;color:#385047;border-radius:999px;padding:8px 13px;font-weight:800;cursor:pointer}
+.analytics-range-buttons button.active{background:#12372a;color:#fff;border-color:#12372a}
+.analytics-range-title{color:#9a761b;white-space:nowrap}
+.analytics-date-inputs{display:flex;gap:10px;align-items:center}.analytics-date-inputs label{font-size:12px;color:#52615b;font-weight:800}.analytics-date-inputs input{margin-left:5px;border:1px solid #d5ddd8;border-radius:8px;padding:7px;background:#fff;color:#253a33}
+.analytics-daily{overflow:hidden}.analytics-table-wrap{overflow-x:auto}.analytics-daily table{width:100%;border-collapse:collapse;min-width:720px}.analytics-daily th,.analytics-daily td{padding:11px 10px;border-bottom:1px solid #edf0ed;text-align:right;font-size:13px}.analytics-daily th{background:#f4f6f4;color:#385047;font-weight:900}.analytics-daily td{color:#42544c}.analytics-daily td:not(:first-child){font-weight:800;color:#12372a}
+@media(max-width:700px){.analytics-range-bar{align-items:stretch}.analytics-range-buttons{display:grid;grid-template-columns:repeat(2,1fr)}.analytics-range-buttons button{font-size:12px}.analytics-date-inputs{flex-direction:column;align-items:stretch}.analytics-range-title{width:100%}}
