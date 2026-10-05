@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { BookOpen, FileText, Video, Megaphone, Settings, LogOut, Plus, Pencil, Trash2, Save, X, Upload } from 'lucide-react'
+import { BookOpen, FileText, Video, Megaphone, Settings, LogOut, Plus, Pencil, Trash2, Save, X, Upload, BarChart3 } from 'lucide-react'
 
 const emptyCourse={title:'',slug:'',short_description:'',description:'',syllabus:'',flyer_url:'',video_url:'',video_platform:'youtube',google_form_url:'',instructor:'',duration:'',fee:'',published:false,featured:false}
 const emptyArticle={title:'',slug:'',excerpt:'',content:'',cover_url:'',author:'',category:'',topic_id:null,published:false,published_at:''}
@@ -21,12 +21,18 @@ export default function AdminPanel(){
   const [settings,setSettings]=useState(null)
   const [playlists,setPlaylists]=useState([])
   const [articleTopics,setArticleTopics]=useState([])
+  const [analytics,setAnalytics]=useState([])
 
   useEffect(()=>{supabase?.auth.getUser().then(({data})=>setUser(data.user))},[])
   useEffect(()=>{if(user) load()},[user,tab])
 
   async function load(){
     setLoading(true); setMessage('')
+    if(tab==='analytics'){
+      const {data,error}=await supabase.from('analytics_events').select('*').order('created_at',{ascending:false}).limit(10000)
+      if(error) setMessage(error.message); else setAnalytics(data||[])
+      setLoading(false); return
+    }
     if(tab==='articles'){
       const [{data,error},{data:ts,error:te}]=await Promise.all([
         supabase.from('articles').select('*').order('created_at',{ascending:false}),
@@ -115,7 +121,7 @@ export default function AdminPanel(){
   if(!user) return <div className="admin-page"><div className="admin-card"><h1>Access required</h1><p>Admin login required.</p></div></div>
 
   const nav=[
-    ['courses','کورسز',BookOpen],['articles','مقالات',FileText],['topics','عناوین',FileText],['media','میڈیا',Video],['playlists','پلے لسٹس',Video],['quran_classes','Quran Classes',BookOpen],['announcements','اعلانات',Megaphone],['settings','سائٹ سیٹنگز',Settings]
+    ['analytics','Analytics',BarChart3],['courses','کورسز',BookOpen],['articles','مقالات',FileText],['topics','عناوین',FileText],['media','میڈیا',Video],['playlists','پلے لسٹس',Video],['quran_classes','Quran Classes',BookOpen],['announcements','اعلانات',Megaphone],['settings','سائٹ سیٹنگز',Settings]
   ]
   return <div className="admin-shell" dir="rtl">
     <aside className="admin-sidebar">
@@ -127,7 +133,7 @@ export default function AdminPanel(){
     <main className="admin-main">
       <div className="admin-top"><div><span className="section-label">AL-HIBR ACADEMY</span><h1>{nav.find(x=>x[0]===tab)?.[1]}</h1></div>{tab!=='settings'&&<button className="btn primary" onClick={startNew}><Plus/> نیا شامل کریں</button>}</div>
       {message&&<div className="admin-message">{message}</div>}
-      {tab==='settings'?<SettingsForm settings={settings} setSettings={setSettings} onSave={saveSettings} saving={saving}/>:editing?<Editor tab={tab} value={editing} setValue={setEditing} onSave={saveItem} onCancel={()=>setEditing(null)} saving={saving} uploadFile={uploadFile} playlists={playlists} articleTopics={articleTopics}/>:loading?<div className="admin-empty">Loading...</div>:<List tab={tab} items={items} onEdit={startEdit} onDelete={removeItem}/>}
+      {tab==='settings'?<SettingsForm settings={settings} setSettings={setSettings} onSave={saveSettings} saving={saving}/>:tab==='analytics'?<AnalyticsDashboard events={analytics}/>:editing?<Editor tab={tab} value={editing} setValue={setEditing} onSave={saveItem} onCancel={()=>setEditing(null)} saving={saving} uploadFile={uploadFile} playlists={playlists} articleTopics={articleTopics}/>:loading?<div className="admin-empty">Loading...</div>:<List tab={tab} items={items} onEdit={startEdit} onDelete={removeItem}/>}
     </main>
   </div>
 }
@@ -156,3 +162,29 @@ function Editor({tab,value,setValue,onSave,onCancel,saving,uploadFile,playlists=
 }
 function Checks({value,set,featured=false}){return <div className="check-row"><label><input type="checkbox" checked={!!value.published} onChange={e=>set('published',e.target.checked)}/> Published</label>{featured&&<label><input type="checkbox" checked={!!value.featured} onChange={e=>set('featured',e.target.checked)}/> Featured</label>}</div>}
 function SettingsForm({settings,setSettings,onSave,saving}){const s=settings||{};const set=(k,v)=>setSettings(x=>({...x,[k]:v}));return <form className="admin-editor" onSubmit={onSave}><Field label="Academy Name"><input value={s.academy_name||''} onChange={e=>set('academy_name',e.target.value)}/></Field><Field label="Urdu Name"><input value={s.academy_name_urdu||''} onChange={e=>set('academy_name_urdu',e.target.value)}/></Field><Field label="Methodology"><textarea rows="6" value={s.methodology||''} onChange={e=>set('methodology',e.target.value)}/></Field><Field label="YouTube URL"><input value={s.youtube_url||''} onChange={e=>set('youtube_url',e.target.value)}/></Field><Field label="WhatsApp URL"><input value={s.whatsapp_url||''} onChange={e=>set('whatsapp_url',e.target.value)} placeholder="https://wa.me/923..." /></Field><Field label="Facebook URL"><input value={s.facebook_url||''} onChange={e=>set('facebook_url',e.target.value)} placeholder="https://facebook.com/..." /></Field><Field label="Instagram URL"><input value={s.instagram_url||''} onChange={e=>set('instagram_url',e.target.value)} placeholder="https://instagram.com/..." /></Field><Field label="TikTok URL"><input value={s.tiktok_url||''} onChange={e=>set('tiktok_url',e.target.value)} placeholder="https://tiktok.com/@..." /></Field><Field label="Contact Email"><input type="email" value={s.contact_email||''} onChange={e=>set('contact_email',e.target.value)}/></Field><button className="btn primary" disabled={saving}><Save/> محفوظ کریں</button></form>}
+
+
+function AnalyticsDashboard({events=[]}){
+ const now=Date.now(), day=86400000
+ const today=events.filter(e=>now-new Date(e.created_at).getTime()<day)
+ const visitors=new Set(today.map(e=>e.visitor_id).filter(Boolean)).size
+ const views=today.filter(e=>e.event_type==='page_view').length
+ const count=(type)=>today.filter(e=>e.event_type===type).length
+ const top=(type)=>Object.entries(today.filter(e=>e.event_type===type).reduce((m,e)=>(m[e.content_title||'Untitled']=(m[e.content_title||'Untitled']||0)+1,m),{})).sort((a,b)=>b[1]-a[1]).slice(0,5)
+ return <div className="analytics-dashboard" dir="rtl">
+  <div className="analytics-cards">
+   <div><strong>{visitors}</strong><span>Unique Visitors (Today)</span></div>
+   <div><strong>{views}</strong><span>Page Views (Today)</span></div>
+   <div><strong>{count('article_view')}</strong><span>Article Views</span></div>
+   <div><strong>{count('video_view')}</strong><span>Video Views</span></div>
+   <div><strong>{count('course_view')}</strong><span>Course Views</span></div>
+   <div><strong>{count('topic_open')}</strong><span>Topics Opened</span></div>
+  </div>
+  <div className="analytics-grid">
+   <div className="analytics-panel"><h3>Top Articles Today</h3>{top('article_view').map(([t,n])=><p key={t}><span>{t}</span><b>{n}</b></p>)}</div>
+   <div className="analytics-panel"><h3>Top Videos Today</h3>{top('video_view').map(([t,n])=><p key={t}><span>{t}</span><b>{n}</b></p>)}</div>
+   <div className="analytics-panel"><h3>Top Courses Today</h3>{top('course_view').map(([t,n])=><p key={t}><span>{t}</span><b>{n}</b></p>)}</div>
+  </div>
+  <p className="analytics-note">یہ ڈیٹا صرف Admin Panel میں نظر آتا ہے۔ فی الحال Today کے اعداد و شمار دکھائے جا رہے ہیں۔</p>
+ </div>
+}
