@@ -125,3 +125,5 @@ html,body,#root{background:#071f2d!important;color:#eef7f4}body{background:linea
  .article-topic-card>img,.article-topic-placeholder{height:210px}
  .article-topic-modal-grid{grid-template-columns:1fr}
 }
+
+.article-topic-card-body p{color:#9a761b!important;-webkit-text-fill-color:#9a761b!important;font-weight:800!important}
