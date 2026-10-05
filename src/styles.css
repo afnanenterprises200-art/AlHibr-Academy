@@ -161,3 +161,20 @@ html,body,#root{background:#071f2d!important;color:#eef7f4}body{background:linea
 .facebook-compact-follow svg{width:14px}
 @media(max-width:700px){.social-stats-line{gap:8px;padding:11px 12px}.social-stats-brand{min-width:110px}.social-stat{min-width:125px}.social-stat strong{font-size:20px}.social-stat-icon{width:36px;height:36px}.social-stats-brand strong{font-size:15px}.social-stats-brand span{font-size:9px}.facebook-compact-line{gap:9px}.facebook-compact-note{display:none}.facebook-compact-follow{margin-left:auto}}
 @media(max-width:500px){.social-stats-line{overflow-x:auto}.social-stats-brand{min-width:105px}.social-stat{min-width:135px}.facebook-compact-link{min-width:135px}.facebook-compact-follow{padding:7px 10px}}
+
+
+/* Social achievement highlight strip */
+.social-achievement-strip{padding:22px 0 10px;background:transparent!important}
+.social-achievement-line{display:flex;align-items:center;gap:18px;min-height:130px;padding:20px 28px;border:2px solid #d8e3de;border-radius:18px;background:linear-gradient(100deg,#032d2a,#063b38);box-shadow:0 14px 34px #0004;overflow:hidden}
+.social-achievement-copy{flex:1.5;min-width:280px}
+.social-achievement-copy h2{margin:0;color:#fff!important;font-size:27px!important;line-height:1.15!important;font-weight:900;max-width:470px}
+.social-achievement-icons{display:flex;align-items:center;gap:9px;margin-top:12px}
+.social-achievement-icons span{width:29px;height:29px;border-radius:7px;display:grid;place-items:center;color:#fff}
+.social-achievement-icons svg{width:18px;height:18px}
+.yt-icon{background:#f12d3d}.ig-icon{background:#d62976}.fb-icon{background:#1877f2}.live-ring{background:#314e4a;font-size:23px;line-height:1}
+.achievement-stat{display:flex;align-items:center;gap:10px;min-width:170px;padding:13px 15px;border-radius:14px;text-decoration:none;background:#15524d;border:1px solid #c8a65b22}
+.achievement-icon{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:#48d6a2;color:#06352f;flex:none}.achievement-icon svg{width:22px;height:22px}.achievement-text strong{display:block;color:#fff;font-size:27px;line-height:1}.achievement-text small{display:block;color:#d6e4df;font-size:12px;margin-top:5px;white-space:nowrap}
+.youtube-stat-live .achievement-icon{background:#48d6a2}.youtube-stat-live .achievement-text strong{color:#fff}
+.achievement-follow{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;background:#1877f2;color:#fff;text-decoration:none;border-radius:999px;padding:10px 16px;font-weight:900;font-size:13px}.achievement-follow svg{width:15px}
+@media(max-width:950px){.social-achievement-line{gap:10px;padding:18px}.social-achievement-copy{min-width:220px}.social-achievement-copy h2{font-size:22px!important}.achievement-stat{min-width:145px;padding:10px}.achievement-text strong{font-size:23px}.achievement-follow{padding:9px 12px}}
+@media(max-width:700px){.social-achievement-line{display:grid;grid-template-columns:1fr 1fr;min-height:auto}.social-achievement-copy{grid-column:1/-1;min-width:0}.social-achievement-copy h2{max-width:none}.achievement-follow{justify-content:center}.achievement-stat{min-width:0}.achievement-text small{white-space:normal}}
