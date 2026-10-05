@@ -22,14 +22,19 @@ export default function AdminPanel(){
   const [playlists,setPlaylists]=useState([])
   const [articleTopics,setArticleTopics]=useState([])
   const [analytics,setAnalytics]=useState([])
+  const [analyticsRange,setAnalyticsRange]=useState('30d')
+  const [analyticsFrom,setAnalyticsFrom]=useState('')
+  const [analyticsTo,setAnalyticsTo]=useState('')
 
   useEffect(()=>{supabase?.auth.getUser().then(({data})=>setUser(data.user))},[])
-  useEffect(()=>{if(user) load()},[user,tab])
+  useEffect(()=>{if(user) load()},[user,tab,analyticsRange,analyticsFrom,analyticsTo])
 
   async function load(){
     setLoading(true); setMessage('')
     if(tab==='analytics'){
-      const {data,error}=await supabase.from('analytics_events').select('*').order('created_at',{ascending:false}).limit(10000)
+      const {from,to}=getAnalyticsRange(analyticsRange,analyticsFrom,analyticsTo)
+      let query=supabase.from('analytics_events').select('*').gte('created_at',from).lt('created_at',to).order('created_at',{ascending:false}).limit(50000)
+      const {data,error}=await query
       if(error) setMessage(error.message); else setAnalytics(data||[])
       setLoading(false); return
     }
@@ -133,7 +138,7 @@ export default function AdminPanel(){
     <main className="admin-main">
       <div className="admin-top"><div><span className="section-label">AL-HIBR ACADEMY</span><h1>{nav.find(x=>x[0]===tab)?.[1]}</h1></div>{tab!=='settings'&&<button className="btn primary" onClick={startNew}><Plus/> نیا شامل کریں</button>}</div>
       {message&&<div className="admin-message">{message}</div>}
-      {tab==='settings'?<SettingsForm settings={settings} setSettings={setSettings} onSave={saveSettings} saving={saving}/>:tab==='analytics'?<AnalyticsDashboard events={analytics}/>:editing?<Editor tab={tab} value={editing} setValue={setEditing} onSave={saveItem} onCancel={()=>setEditing(null)} saving={saving} uploadFile={uploadFile} playlists={playlists} articleTopics={articleTopics}/>:loading?<div className="admin-empty">Loading...</div>:<List tab={tab} items={items} onEdit={startEdit} onDelete={removeItem}/>}
+      {tab==='settings'?<SettingsForm settings={settings} setSettings={setSettings} onSave={saveSettings} saving={saving}/>:tab==='analytics'?<AnalyticsDashboard events={analytics} range={analyticsRange} setRange={setAnalyticsRange} from={analyticsFrom} to={analyticsTo} setFrom={setAnalyticsFrom} setTo={setAnalyticsTo}/>:editing?<Editor tab={tab} value={editing} setValue={setEditing} onSave={saveItem} onCancel={()=>setEditing(null)} saving={saving} uploadFile={uploadFile} playlists={playlists} articleTopics={articleTopics}/>:loading?<div className="admin-empty">Loading...</div>:<List tab={tab} items={items} onEdit={startEdit} onDelete={removeItem}/>}
     </main>
   </div>
 }
@@ -164,27 +169,72 @@ function Checks({value,set,featured=false}){return <div className="check-row"><l
 function SettingsForm({settings,setSettings,onSave,saving}){const s=settings||{};const set=(k,v)=>setSettings(x=>({...x,[k]:v}));return <form className="admin-editor" onSubmit={onSave}><Field label="Academy Name"><input value={s.academy_name||''} onChange={e=>set('academy_name',e.target.value)}/></Field><Field label="Urdu Name"><input value={s.academy_name_urdu||''} onChange={e=>set('academy_name_urdu',e.target.value)}/></Field><Field label="Methodology"><textarea rows="6" value={s.methodology||''} onChange={e=>set('methodology',e.target.value)}/></Field><Field label="YouTube URL"><input value={s.youtube_url||''} onChange={e=>set('youtube_url',e.target.value)}/></Field><Field label="WhatsApp URL"><input value={s.whatsapp_url||''} onChange={e=>set('whatsapp_url',e.target.value)} placeholder="https://wa.me/923..." /></Field><Field label="Facebook URL"><input value={s.facebook_url||''} onChange={e=>set('facebook_url',e.target.value)} placeholder="https://facebook.com/..." /></Field><Field label="Instagram URL"><input value={s.instagram_url||''} onChange={e=>set('instagram_url',e.target.value)} placeholder="https://instagram.com/..." /></Field><Field label="TikTok URL"><input value={s.tiktok_url||''} onChange={e=>set('tiktok_url',e.target.value)} placeholder="https://tiktok.com/@..." /></Field><Field label="Contact Email"><input type="email" value={s.contact_email||''} onChange={e=>set('contact_email',e.target.value)}/></Field><button className="btn primary" disabled={saving}><Save/> محفوظ کریں</button></form>}
 
 
-function AnalyticsDashboard({events=[]}){
- const now=Date.now(), day=86400000
- const today=events.filter(e=>now-new Date(e.created_at).getTime()<day)
- const visitors=new Set(today.map(e=>e.visitor_id).filter(Boolean)).size
- const views=today.filter(e=>e.event_type==='page_view').length
- const count=(type)=>today.filter(e=>e.event_type===type).length
- const top=(type)=>Object.entries(today.filter(e=>e.event_type===type).reduce((m,e)=>(m[e.content_title||'Untitled']=(m[e.content_title||'Untitled']||0)+1,m),{})).sort((a,b)=>b[1]-a[1]).slice(0,5)
+function getAnalyticsRange(range,customFrom,customTo){
+ const now=new Date()
+ const start=new Date(now.getFullYear(),now.getMonth(),now.getDate())
+ let from=start,to=new Date(start.getTime()+86400000)
+ if(range==='yesterday'){from=new Date(start.getTime()-86400000)}
+ if(range==='7d'){from=new Date(start.getTime()-6*86400000)}
+ if(range==='30d'){from=new Date(start.getTime()-29*86400000)}
+ if(range==='90d'){from=new Date(start.getTime()-89*86400000)}
+ if(range==='lastWeek'){
+   const day=start.getDay()||7
+   from=new Date(start.getTime()-(day+6)*86400000)
+   to=new Date(from.getTime()+7*86400000)
+ }
+ if(range==='lastMonth'){
+   from=new Date(start.getFullYear(),start.getMonth()-1,1)
+   to=new Date(start.getFullYear(),start.getMonth(),1)
+ }
+ if(range==='custom'&&customFrom){
+   from=new Date(customFrom+'T00:00:00')
+   to=customTo?new Date(new Date(customTo+'T00:00:00').getTime()+86400000):new Date(from.getTime()+86400000)
+ }
+ return {from:from.toISOString(),to:to.toISOString()}
+}
+
+function AnalyticsDashboard({events=[],range,setRange,from,to,setFrom,setTo}){
+ const rangeLabel={today:'Today',yesterday:'Yesterday','7d':'Last 7 Days','30d':'Last 30 Days','90d':'Last 90 Days',lastWeek:'Last Week',lastMonth:'Last Month',custom:'Custom Date'}[range]||'Last 30 Days'
+ const visitors=new Set(events.map(e=>e.visitor_id).filter(Boolean)).size
+ const views=events.filter(e=>e.event_type==='page_view').length
+ const count=(type)=>events.filter(e=>e.event_type===type).length
+ const top=(type)=>Object.entries(events.filter(e=>e.event_type===type).reduce((m,e)=>(m[e.content_title||'Untitled']=(m[e.content_title||'Untitled']||0)+1,m),{})).sort((a,b)=>b[1]-a[1]).slice(0,5)
+ const daily={}
+ events.forEach(e=>{
+   const d=new Date(e.created_at).toLocaleDateString('en-CA')
+   if(!daily[d]) daily[d]={date:d,visitors:new Set(),views:0,articles:0,videos:0,courses:0,topics:0}
+   daily[d].visitors.add(e.visitor_id)
+   if(e.event_type==='page_view')daily[d].views++
+   if(e.event_type==='article_view')daily[d].articles++
+   if(e.event_type==='video_view')daily[d].videos++
+   if(e.event_type==='course_view')daily[d].courses++
+   if(e.event_type==='topic_open')daily[d].topics++
+ })
+ const dailyRows=Object.values(daily).sort((a,b)=>b.date.localeCompare(a.date))
  return <div className="analytics-dashboard" dir="rtl">
+  <div className="analytics-range-bar">
+   <div className="analytics-range-buttons">
+    {[
+      ['today','Today'],['yesterday','Yesterday'],['7d','Last 7 Days'],['30d','Last 30 Days'],['90d','Last 90 Days'],['lastWeek','Last Week'],['lastMonth','Last Month'],['custom','Custom Date']
+    ].map(([key,label])=><button key={key} className={range===key?'active':''} onClick={()=>setRange(key)}>{label}</button>)}
+   </div>
+   {range==='custom'&&<div className="analytics-date-inputs"><label>From <input type="date" value={from} onChange={e=>setFrom(e.target.value)}/></label><label>To <input type="date" value={to} onChange={e=>setTo(e.target.value)}/></label></div>}
+   <strong className="analytics-range-title">{rangeLabel}</strong>
+  </div>
   <div className="analytics-cards">
-   <div><strong>{visitors}</strong><span>Unique Visitors (Today)</span></div>
-   <div><strong>{views}</strong><span>Page Views (Today)</span></div>
+   <div><strong>{visitors}</strong><span>Unique Visitors</span></div>
+   <div><strong>{views}</strong><span>Page Views</span></div>
    <div><strong>{count('article_view')}</strong><span>Article Views</span></div>
    <div><strong>{count('video_view')}</strong><span>Video Views</span></div>
    <div><strong>{count('course_view')}</strong><span>Course Views</span></div>
    <div><strong>{count('topic_open')}</strong><span>Topics Opened</span></div>
   </div>
+  <div className="analytics-panel analytics-daily"><h3>Daily Breakdown</h3><div className="analytics-table-wrap"><table><thead><tr><th>Date</th><th>Visitors</th><th>Page Views</th><th>Articles</th><th>Videos</th><th>Courses</th><th>Topics</th></tr></thead><tbody>{dailyRows.map(r=><tr key={r.date}><td>{r.date}</td><td>{r.visitors.size}</td><td>{r.views}</td><td>{r.articles}</td><td>{r.videos}</td><td>{r.courses}</td><td>{r.topics}</td></tr>)}</tbody></table></div></div>
   <div className="analytics-grid">
-   <div className="analytics-panel"><h3>Top Articles Today</h3>{top('article_view').map(([t,n])=><p key={t}><span>{t}</span><b>{n}</b></p>)}</div>
-   <div className="analytics-panel"><h3>Top Videos Today</h3>{top('video_view').map(([t,n])=><p key={t}><span>{t}</span><b>{n}</b></p>)}</div>
-   <div className="analytics-panel"><h3>Top Courses Today</h3>{top('course_view').map(([t,n])=><p key={t}><span>{t}</span><b>{n}</b></p>)}</div>
+   <div className="analytics-panel"><h3>Top Articles</h3>{top('article_view').map(([t,n])=><p key={t}><span>{t}</span><b>{n}</b></p>)}</div>
+   <div className="analytics-panel"><h3>Top Videos</h3>{top('video_view').map(([t,n])=><p key={t}><span>{t}</span><b>{n}</b></p>)}</div>
+   <div className="analytics-panel"><h3>Top Courses</h3>{top('course_view').map(([t,n])=><p key={t}><span>{t}</span><b>{n}</b></p>)}</div>
   </div>
-  <p className="analytics-note">یہ ڈیٹا صرف Admin Panel میں نظر آتا ہے۔ فی الحال Today کے اعداد و شمار دکھائے جا رہے ہیں۔</p>
+  <p className="analytics-note">تمام analytics events Supabase میں محفوظ رہتے ہیں۔ یہاں آپ Today، Yesterday، Last 7/30/90 Days، Last Week، Last Month یا اپنی مخصوص تاریخ دیکھ سکتے ہیں۔</p>
  </div>
 }
