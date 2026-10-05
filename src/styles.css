@@ -132,3 +132,32 @@ html,body,#root{background:#071f2d!important;color:#eef7f4}body{background:linea
 
 /* Facebook community section */
 .facebook-section{background:transparent!important}.facebook-showcase{display:grid;grid-template-columns:.8fr 1.2fr;gap:22px;align-items:stretch;margin-top:28px}.facebook-info-card,.facebook-plugin-card{background:#f8f5ea;border:1px solid #c9b97855;border-radius:20px;box-shadow:0 14px 36px #00000035;overflow:hidden}.facebook-info-card{padding:30px;display:flex;flex-direction:column;justify-content:center}.facebook-icon-wrap{width:62px;height:62px;border-radius:18px;background:#1877f2;color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px #1877f233}.facebook-icon-wrap svg{width:32px;height:32px}.facebook-live-badge{display:inline-flex;width:max-content;margin-top:20px;padding:6px 11px;border-radius:999px;background:#e7f0eb;color:#0a3b3b;font-size:11px;font-weight:900;letter-spacing:.12em}.facebook-info-card h3{font-size:30px;margin:12px 0 6px;color:#111}.facebook-info-card>p{color:#111!important;font-size:16px!important;line-height:1.7}.facebook-stat{margin-top:18px;padding:17px;border-radius:14px;background:#0a2f39;border:1px solid #c8a65b66}.facebook-stat strong,.facebook-stat span{display:block}.facebook-stat strong{color:#e0c878;font-size:19px}.facebook-stat span{color:#d8e5e1;font-size:13px;margin-top:4px}.facebook-page-link{display:inline-flex;align-items:center;gap:8px;margin-top:18px;color:#12372a;font-weight:900;text-decoration:none}.facebook-page-link svg{width:17px}.facebook-follow-btn{background:#1877f2!important;color:#fff!important}.facebook-follow-btn:hover{background:#0d65d9!important}.facebook-plugin-card{padding:10px;display:flex;justify-content:center;align-items:flex-start}.facebook-plugin-card iframe{display:block;border-radius:14px;background:#fff}@media(max-width:850px){.facebook-showcase{grid-template-columns:1fr}.facebook-info-card{order:1}.facebook-plugin-card{order:2}}@media(max-width:600px){.facebook-info-card{padding:24px}.facebook-info-card h3{font-size:26px}.facebook-plugin-card{padding:6px}.facebook-plugin-card iframe{height:560px}}
+
+
+/* Compact social statistics strip */
+.social-stats-strip{padding:16px 0 4px;background:transparent!important}
+.social-stats-line{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid #d9e3dc;border-radius:14px;background:#062d2b;box-shadow:0 10px 28px #0003;overflow:hidden}
+.social-stats-brand{display:flex;flex-direction:column;min-width:150px;padding-right:10px;border-right:1px solid #c8a65b55}
+.social-stats-brand span{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#e0c878;font-weight:900}
+.social-stats-brand strong{font-size:18px;color:#f2f7f4;margin-top:2px}
+.social-stat{display:flex;align-items:center;gap:10px;min-width:150px;padding:5px 8px;text-decoration:none}
+.social-stat-icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff}
+.social-stat-icon svg{width:22px;height:22px}
+.social-stat-youtube .social-stat-icon{background:#f12d3d}
+.social-stat-facebook .social-stat-icon{background:#1877f2}
+.social-stat strong{display:block;font-size:25px;line-height:1;color:#fff}
+.social-stat small{display:block;margin-top:4px;color:#c8d7d2;font-size:11px;white-space:nowrap}
+.social-stat-facebook small{color:#b9dfca}
+.facebook-compact{padding:10px 0 18px;background:transparent!important}
+.facebook-compact-line{display:flex;align-items:center;gap:14px;padding:11px 16px;border:1px solid #c8a65b55;border-radius:13px;background:#082b35;box-shadow:0 8px 24px #0003}
+.facebook-compact-link{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;min-width:145px}
+.facebook-compact-icon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#1877f2;color:#fff}
+.facebook-compact-icon svg{width:21px;height:21px}
+.facebook-compact-link strong{display:block;font-size:22px;line-height:1;color:#fff}
+.facebook-compact-link small{display:block;color:#c8d7d2;font-size:11px;margin-top:4px;white-space:nowrap}
+.facebook-live-dot{font-size:10px;font-weight:900;letter-spacing:.08em;color:#061f1c;background:#48d6a2;border-radius:999px;padding:5px 8px}
+.facebook-compact-note{color:#e0c878;font-weight:800;font-size:14px;flex:1}
+.facebook-compact-follow{display:inline-flex;align-items:center;gap:6px;color:#fff;background:#1877f2;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:900;text-decoration:none}
+.facebook-compact-follow svg{width:14px}
+@media(max-width:700px){.social-stats-line{gap:8px;padding:11px 12px}.social-stats-brand{min-width:110px}.social-stat{min-width:125px}.social-stat strong{font-size:20px}.social-stat-icon{width:36px;height:36px}.social-stats-brand strong{font-size:15px}.social-stats-brand span{font-size:9px}.facebook-compact-line{gap:9px}.facebook-compact-note{display:none}.facebook-compact-follow{margin-left:auto}}
+@media(max-width:500px){.social-stats-line{overflow-x:auto}.social-stats-brand{min-width:105px}.social-stat{min-width:135px}.facebook-compact-link{min-width:135px}.facebook-compact-follow{padding:7px 10px}}
