@@ -127,3 +127,5 @@ html,body,#root{background:#071f2d!important;color:#eef7f4}body{background:linea
 }
 
 .article-topic-card-body p{color:#9a761b!important;-webkit-text-fill-color:#9a761b!important;font-weight:800!important}
+
+.analytics-dashboard{display:grid;gap:20px}.analytics-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.analytics-cards>div,.analytics-panel{background:#fff;border:1px solid #e1e7e2;border-radius:14px;padding:20px;box-shadow:0 8px 24px #12372a0d}.analytics-cards strong{display:block;font-size:32px;color:#12372a}.analytics-cards span{color:#68736e;font-size:13px}.analytics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.analytics-panel h3{margin-top:0;color:#12372a}.analytics-panel p{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #edf0ed;padding:9px 0;margin:0}.analytics-panel p span{color:#394b44}.analytics-panel b{color:#9a761b}.analytics-note{color:#68736e}@media(max-width:800px){.analytics-cards,.analytics-grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.analytics-cards,.analytics-grid{grid-template-columns:1fr}}
